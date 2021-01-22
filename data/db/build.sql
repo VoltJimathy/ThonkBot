@@ -7,6 +7,5 @@ CREATE TABLE IF NOT EXISTS exp(
 
 CREATE  TABLE IF NOT EXISTS Guilds(
     GuildId integer PRIMARY KEY,
-    Prefix text DEFAULT "+",
-    MemberUpdateChannel integer DEFAULT None
+    Prefix text DEFAULT "+"
 )

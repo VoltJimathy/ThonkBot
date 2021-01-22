@@ -51,6 +51,19 @@ class Bot(BotBase):
     def update_db(self):
         db.multiexec("INSERT OR IGNORE INTO Guilds (GuildID) VALUES (?)",
                      ((guild.id,) for guild in self.guilds))
+        
+        db.multiexec("INSERT OR IGNORE INTO exp (UserID) VALUES (?)",
+					 ((member.id,) for member in self.guild.members if not member.bot))
+        
+        to_remove = []
+        stored_members = db.column("SELECT UserID FROM exp")
+        for id_ in stored_members:
+            if not self.guild.get_member(id_):
+                to_remove.append(id_)
+                
+        db.multiexec("DELETE FROM exp WHERE UserID = ?",
+			         ((id_,) for id_ in to_remove))
+        
         db.commit()
 
     def run(self, version):
@@ -66,7 +79,6 @@ class Bot(BotBase):
         super().run(self.TOKEN, reconnect=True)
 
     async def on_connect(self):
-        self.update_db()
         print('Bot connected!')
 
     async def on_disconnect(self):
@@ -118,6 +130,7 @@ class Bot(BotBase):
             self.schedular.start()
 
             await self.stdout.send('Now online!')
+            self.update_db()
 
             embed = Embed(title='__Now online!__', description='Thonk Bot is now online!', timestamp=datetime.utcnow())
             embed.add_field(name="Now Online!", value="I am now online and ready to be used!", inline=True)

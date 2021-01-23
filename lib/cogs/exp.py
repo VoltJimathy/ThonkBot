@@ -1,5 +1,5 @@
 from discord.ext.commands import Cog
-from discord.ext.commands import command
+from discord.ext.commands import command, has_permissions, MissingPermissions
 from discord import Embed, Member
 from datetime import datetime, timedelta
 from random import randint
@@ -57,6 +57,40 @@ class exp(Cog):
             embed.add_field(name=name, value=value, inline=inline)
 
         await ctx.send(embed=embed)
+    
+    @command(name="addxp", aliases=["+xp"])
+    @has_permissions(administrator=True)
+    async def add_xp_to_member(self, ctx, member: Member, amount: int):
+        if member != ctx.author:
+            db.execute("UPDATE exp SET XP = XP + ? WHERE UserID = ?", amount, member.id)
+            db.commit()
+            await ctx.send(f"I have added {amount} XP to {member.display_name}'s experience")
+        else:
+            await ctx.send("You can not add xp to yourself")
+    
+    @add_xp_to_member.error
+    async def add_xp_to_member_error(self, ctx, error):
+        if isinstance(error, MissingPermissions):
+            await ctx.send("You are missing the required permissions to use this command")
+        else:
+            raise error
+    
+    @command(name="takexp", aliases=["-xp"])
+    @has_permissions(administrator=True)
+    async def remove_xp_to_member(self, ctx, member: Member, amount: int):
+        if member != ctx.author:
+            db.execute("UPDATE exp SET XP = XP - ? WHERE UserID = ?", amount, member.id)
+            db.commit()
+            await ctx.send(f"I have taken away {amount} XP from {member.display_name}'s experience")
+        else:
+            await ctx.send("You can not remove your own XP")
+    
+    @remove_xp_to_member.error
+    async def remove_xp_to_member_error(self, ctx, error):
+        if isinstance(error, MissingPermissions):
+            await ctx.send("You are missing the required permissions to use this command")
+        else:
+            raise error
 
 def setup(bot):
     bot.add_cog(exp(bot))

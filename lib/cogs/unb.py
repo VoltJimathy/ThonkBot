@@ -20,13 +20,6 @@ class unb(Cog):
         await self.bot.stdout.send('unb Cog loaded!')
     
     @command()
-    async def test(self, ctx):
-        '''gives a random amount of money from 10 to 20'''
-        cash = randint(10, 20)
-        await self.unb_client.patch_user_balance(ctx.guild.id, ctx.author.id, cash=cash)
-        await ctx.send(f'Gave {ctx.author} {cash}')
-    
-    @command()
     @cooldown(1, 60, BucketType.user)
     async def books(self, ctx):
         '''Gives money for reading books'''
@@ -42,7 +35,14 @@ class unb(Cog):
     @command()
     @cooldown(1, 3600, BucketType.user)
     async def hourly(self, ctx):
-        cash = randint()
+        cash = randint(1000, 2000)
+        await self.unb_client.patch_user_balance(ctx.guild.id, ctx.author.id, cash=cash)
+        embed = Embed(
+            title="Hourly",
+            description=f"You just got {cash} for waiting 1 hour. I wonder who gave it to you",
+            colour=0x00ff00,
+            timestamp=datetime.utcnow())
+        await ctx.send(embed=embed)
 
 def setup(bot):
     bot.add_cog(unb(bot))

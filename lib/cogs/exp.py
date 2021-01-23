@@ -5,6 +5,38 @@ from datetime import datetime, timedelta
 from random import randint
 from ..db import db #type: ignore
 from typing import Optional
+from discord.ext.menus import MenuPages, ListPageSource
+
+class HelpMenu(ListPageSource):
+    def __init__(self, ctx, data):
+        self.ctx = ctx
+
+        super().__init__(data, per_page=10)
+    
+    async def write_page(self, menu, offset, fields=[]):
+        len_data = len(self.entries)
+
+        embed = Embed(
+            title="XP Leaderboard",
+            colour=self.ctx.author.colour,
+            timestamp=datetime.utcnow())
+        embed.set_thumbnail(url=self.ctx.guild.icon_url)
+        embed.set_footer(text=f"{offset:,} - {min(len_data, offset+self.per_page-1):,} of {len_data:,} members.")
+
+        for name, value in fields:
+            embed.add_field(name=name, value=value, inline=False)
+        
+        return embed
+    
+    async def format_page(self, menu, entries):
+        offset = (menu.current_page*self.per_page) + 1
+
+        fields = []
+        table = ("\n".join(f"{idx+offset}. {self.ctx.bot.guild.get_member(entry[0]).display_name} (XP: {entry[1]} | Level: {entry[2]})"
+                 for idx, entry in enumerate(entries)))
+        
+        fields.append(("Ranks", table))
+        return await self.write_page(menu, offset, fields)
 
 class exp(Cog):
 
@@ -46,12 +78,15 @@ class exp(Cog):
         member = member or ctx.author
 
         xp, level = db.record("SELECT XP, Level FROM exp WHERE UserID = ?", member.id,)
+        ids = db.column("SELECT UserID FROM exp ORDER BY XP DESC")
+
 
         embed = Embed(
             title=f"{member.display_name}'s rank",
             colour=member.colour,
             timestamp=datetime.utcnow())
-        fields = [("Level", level, True),
+        fields = [("Rank", f"{ids.index(member.id)+1}/{len(ids)}", True),
+                  ("Level", level, True),
                   ("XP", xp, True)]
         for name, value, inline in fields:
             embed.add_field(name=name, value=value, inline=inline)
@@ -72,8 +107,6 @@ class exp(Cog):
     async def add_xp_to_member_error(self, ctx, error):
         if isinstance(error, MissingPermissions):
             await ctx.send("You are missing the required permissions to use this command")
-        else:
-            raise error
     
     @command(name="takexp", aliases=["-xp"])
     @has_permissions(administrator=True)
@@ -89,8 +122,15 @@ class exp(Cog):
     async def remove_xp_to_member_error(self, ctx, error):
         if isinstance(error, MissingPermissions):
             await ctx.send("You are missing the required permissions to use this command")
-        else:
-            raise error
+    
+    @command(name="leaderboard", aliases=["lb"])
+    async def display_leaderboard(self, ctx):
+        records = db.records("SELECT UserID, XP, Level FROM exp ORDER BY XP DESC")
+
+        menu = MenuPages(source=HelpMenu(ctx, records),
+						 clear_reactions_after=True,
+						 timeout=60.0)
+        await menu.start(ctx)
 
 def setup(bot):
     bot.add_cog(exp(bot))

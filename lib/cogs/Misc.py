@@ -46,8 +46,8 @@ class Misc(Cog):
             thumbnail=self.bot.user.avatar_url,
             timestamp=datetime.utcnow())
         
-        proc = Process
-        with proc.oneshot(self=self):
+        proc = Process()
+        with proc.oneshot():
             uptime = timedelta(seconds=time()-proc.create_time())
             cpu_time = timedelta(seconds=(cpu := proc.cpu_times()).system + cpu.user)
             mem_total = virtual_memory().total / (1024**2)
@@ -56,7 +56,7 @@ class Misc(Cog):
         
         fields = [("Bot version", self.bot.VERSION, True),
                   ("Python version", python_version(), True),
-                  ("Discord.py version", discord_version(), True),
+                  ("Discord.py version", discord_version, True),
                   ("Uptime", uptime, True),
                   ("CPU time", cpu_time, True),
                   ("Memory usage", f"{mem_usage:,.3f} / {mem_total:,.0f} ({mem_of_total}%)", True),

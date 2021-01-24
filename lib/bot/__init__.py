@@ -140,7 +140,7 @@ class Bot(BotBase):
             await self.stdout.send(embed=embed)
 
             while not self.cogs_ready.all_ready():
-                await sleep(0.5)
+                await sleep(0.1)
 
             print("Bot ready!")
             self.ready= True

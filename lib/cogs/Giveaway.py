@@ -25,6 +25,7 @@ class Giveaway(Cog):
     async def begin_giveaway(self, ctx, channel: Optional[TextChannel], winners: int, hours: int, *, prize: str):
         '''Begins a giveaway for the set amount of winners, the set time and the prize.
         The time does have to be in seconds (in a future update it will be changed'''
+        hours = hours * 3600 # Turns it from seconds into hours
         channel = channel or ctx.message.channel # If they don't define a channel, it will use the channel the message was sent in
         if winners > 0 and winners <= 5:
             embed = Embed(

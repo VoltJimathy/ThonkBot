@@ -33,9 +33,9 @@ class Bot(BotBase):
         self.ready = False
         self.cogs_ready = Ready()
         self.guild = None
-        self.schedular = AsyncIOScheduler()
+        self.scheduler = AsyncIOScheduler()
 
-        db.autosave(self.schedular) #type: ignore
+        db.autosave(self.scheduler) #type: ignore
 
         super().__init__(
             command_prefix=get_prefix,
@@ -127,7 +127,7 @@ class Bot(BotBase):
         if not self.ready:
             self.guild = self.get_guild(777500671922012170)
             self.stdout = self.get_channel(782694805720662026)
-            self.schedular.start()
+            self.scheduler.start()
 
             await self.stdout.send('Now online!')
             self.update_db()

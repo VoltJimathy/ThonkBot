@@ -86,7 +86,7 @@ class Log(Cog):
         message_id=payload.message_id
         data = payload.data
         channel = self.bot.get_channel(int(data["channel_id"]))
-        guild=channel.guild
+        #guild=channel.guild
         before= payload.cached_message
         after = await channel.fetch_message(message_id)
         if not after.author.bot:
@@ -104,7 +104,8 @@ class Log(Cog):
 
     @Cog.listener()
     async def on_raw_message_delete(self, payload):
-        guild = self.bot.get_guild(payload.guild_id)
+        # print(payload)
+        #guild = self.bot.get_guild(payload.guild_id)
         message = payload.cached_message
         embed = Embed(
             title="Message update",

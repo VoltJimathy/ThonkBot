@@ -35,6 +35,7 @@ class unb(Cog):
     @command()
     @cooldown(1, 3600, BucketType.user)
     async def hourly(self, ctx):
+        '''Gives you a random number of money between 1K and 2K for waiting 1 hour'''
         cash = randint(1000, 2000)
         await self.unb_client.patch_user_balance(ctx.guild.id, ctx.author.id, cash=cash)
         embed = Embed(

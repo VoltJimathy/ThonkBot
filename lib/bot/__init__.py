@@ -7,7 +7,7 @@ from discord import Intents
 from discord import Embed, DMChannel
 from discord.ext.commands import Bot as BotBase
 from discord.ext.commands import when_mentioned_or, command, has_permissions
-from discord.ext.commands import CommandNotFound, CommandOnCooldown, MissingRequiredArgument, BadArgument
+from discord.ext.commands import CommandNotFound, CommandOnCooldown, MissingRequiredArgument, BadArgument, MissingRole
 
 OWNER_IDS = [700336923264155719]
 COGS = [path.split("\\")[-1][:-3] for path in glob('./lib/cogs/*.py')]
@@ -54,6 +54,9 @@ class Bot(BotBase):
         
         db.multiexec("INSERT OR IGNORE INTO exp (UserID) VALUES (?)",
 					 ((member.id,) for member in self.guild.members if not member.bot))
+
+        db.multiexec("INSERT OR IGNORE INTO Mod (UserId) VALUES (?)",
+                     ((member.id,) for member in self.guild.members if not member.bot))
         
         to_remove = []
         stored_members = db.column("SELECT UserID FROM exp")
@@ -63,6 +66,15 @@ class Bot(BotBase):
                 
         db.multiexec("DELETE FROM exp WHERE UserID = ?",
 			         ((id_,) for id_ in to_remove))
+
+        to_remove = []
+        stored_members = db.column("SELECT UserID FROM Mod")
+        for id_ in stored_members:
+            if not self.guild.get_member(id_):
+                to_remove.append(id_)
+
+        db.multiexec("DELETE FROM Mod WHERE UserId = ?",
+                     ((id_) for id_ in to_remove))
         
         db.commit()
 
@@ -117,6 +129,9 @@ class Bot(BotBase):
                 colour=0xFF0000,
                 timestamp=datetime.utcnow())
             await ctx.send(embed=embed)
+
+        elif isinstance(exc, MissingRole):
+            pass
 
         elif hasattr(exc, "original"):
             raise exc.original

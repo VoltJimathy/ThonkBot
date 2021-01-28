@@ -75,6 +75,7 @@ class exp(Cog):
     
     @command(name="rank", aliases=["r"])
     async def rank(self, ctx, member: Optional[Member]):
+        '''Shows the information about the user (or author is no user is passed) regarding their level'''
         member = member or ctx.author
 
         xp, level = db.record("SELECT XP, Level FROM exp WHERE UserID = ?", member.id,)
@@ -96,6 +97,7 @@ class exp(Cog):
     @command(name="addxp", aliases=["+xp"])
     @has_permissions(administrator=True)
     async def add_xp_to_member(self, ctx, member: Member, amount: int):
+        '''Adds XP to a certan user. You need the Administrator permissios to use this command'''
         if member != ctx.author:
             db.execute("UPDATE exp SET XP = XP + ? WHERE UserID = ?", amount, member.id)
             db.commit()
@@ -111,6 +113,7 @@ class exp(Cog):
     @command(name="takexp", aliases=["-xp"])
     @has_permissions(administrator=True)
     async def remove_xp_to_member(self, ctx, member: Member, amount: int):
+        '''Takes XP from a certan user. You need the Administrator permissios to use this command'''
         if member != ctx.author:
             db.execute("UPDATE exp SET XP = XP - ? WHERE UserID = ?", amount, member.id)
             db.commit()
@@ -125,6 +128,7 @@ class exp(Cog):
     
     @command(name="leaderboard", aliases=["lb"])
     async def display_leaderboard(self, ctx):
+        '''Displays the XP leaderboard'''
         records = db.records("SELECT UserID, XP, Level FROM exp ORDER BY XP DESC")
 
         menu = MenuPages(source=HelpMenu(ctx, records),

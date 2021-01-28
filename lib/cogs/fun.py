@@ -17,6 +17,7 @@ class Fun(Cog):
     
     @command(name="dice", aliases=["role"])
     async def roll_dice(self, ctx, die_string: str):
+        '''This command is temporarily dissabled'''
         #dice, value = (int(term) for term in die_string.split("d"))
         #roles = [random.randint(1, value) for i in range(dice)]
         await ctx.send("This command is currently dissabled")
@@ -30,6 +31,7 @@ class Fun(Cog):
     
     @command(name="meme", aliases=["sm", "sendmeme", "Meme", "SendMeme"])
     async def Sendmeme(self, ctx):
+        '''Sends a random meme from the ```https://some-random-api.ml/meme``` API'''
         URL = "https://some-random-api.ml/meme"
 
         async with request("GET", URL) as response:
@@ -46,6 +48,9 @@ class Fun(Cog):
 
     @command(name="fact")
     async def animal_fact(self, ctx, animal: str):
+        '''Sends a fact about a specified animal.
+        The animals you can use are:
+        `dog`, `cat`, `panda`, `fox`, `bird`, and `koala`'''
         if (animal := animal.lower()) in ("dog", "cat", "panda", "fox", "bird", "koala"):
             fact_url = f"https://some-random-api.ml/facts/{animal}"
             image_url = f"https://some-random-api.ml/img/{'birb' if animal == 'bird' else animal}"
@@ -89,6 +94,7 @@ class Fun(Cog):
     
     @command(name="8ball", aliases=["8Ball", "8b", "8B"])
     async def ball_8(self, ctx, *, question):
+        '''Ask our magic 8 ball a question!'''
         replies = ["As I see it, yes.", "Ask again later.", "Better not tell you now.", "Cannot predict now.", "Concentrate and ask again.", "Don't count on it.", "It is certain.", "It is decidedly so."]
         embed = Embed(
             title='**8 Ball**',

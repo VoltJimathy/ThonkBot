@@ -40,6 +40,7 @@ class Misc(Cog):
     
     @command(name="info", aliases=["stats"])
     async def info(self, ctx):
+        '''Get some information about the bot.'''
         embed = Embed(
             title="Bot stats",
             colour=ctx.author.colour,

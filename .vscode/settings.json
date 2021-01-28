@@ -1,4 +1,5 @@
 {
     "python.linting.mypyEnabled": true,
-    "python.linting.enabled": true
+    "python.linting.enabled": true,
+    "python.pythonPath": "C:\\Users\\voltj\\AppData\\Local\\Programs\\Python\\Python38\\python.exe"
 }

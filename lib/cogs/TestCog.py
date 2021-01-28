@@ -20,6 +20,7 @@ class TestCog(Cog):
 
     @command(name="timer")
     async def timer(self, ctx, time: int):
+        '''Sarts a timer'''
         orr_time = time
         msg = await ctx.send(f"You have started a timer for {time} seconds")
         while time > 0:
@@ -30,6 +31,7 @@ class TestCog(Cog):
 
     @command(name="Reminder")
     async def Reminder(self, ctx, time: int, *, message: Optional[str] = "No message"):
+        '''Starts a timer that tells you a message after it ends'''
         embed = Embed(
             title=f"__Reminder for {ctx.author.display_name}:__",
             description=message,
@@ -44,6 +46,7 @@ class TestCog(Cog):
     
     @command(name="ping")
     async def ping(self, ctx):
+        '''Tells you the ping of the bot'''
         start = time() #type: ignore
         message = await ctx.send(f"Pong! Bot Latency: {self.bot.latency*1000:,.0f} ms")
         end = time()

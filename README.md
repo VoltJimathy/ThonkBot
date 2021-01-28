@@ -10,10 +10,11 @@ If you can't understand what it does, DM Book#1785 on discord asking. I will be 
 ### You are required to have python
 
 ### Pip installs (Do these in cmd)
-   `pip install discord.py`
+   `pip install discord.py==1.5.0`
    `pip install apscheduler`
    `pip install git+https://github.com/Rapptz/discord-ext-menus`
    `pip install pybelieva==0.1.0.dev2`
+   `pip install psutil`
    
    
 # Instructions

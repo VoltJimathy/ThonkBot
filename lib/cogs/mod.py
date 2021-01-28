@@ -131,6 +131,11 @@ class Mod(Cog):
                 timestamp=datetime.utcnow())
             await ctx.send(embed=embed)
 
+###################################################################################
+##   You may want to make a new cog for this, because of how big it already is   ##
+##               Just the warn stuff on its own takes up 107 lines               ##
+###################################################################################
+            
     @command(name="warn", aliases=["w", "wm"])
     @has_role("🚔》Staff")
     async def warn_member(self, ctx, member: Member, *, reason: Optional[str] = "No reason provided"):
